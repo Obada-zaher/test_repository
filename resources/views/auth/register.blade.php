@@ -50,6 +50,7 @@
                             </span>
                             @enderror
                         </div>
+                        
                         <div class="mb-3">
                             <label for="password" class="form-label text-muted">{{ __('Password') }}</label>
                             <input id="password" type="password"

@@ -21,20 +21,45 @@ class ProfileController extends Controller
         ]);
     }
 
+    public function index()
+    {
+        $user = Auth::user();
+        return view('profile.show', compact('user'));
+    }
+
     /**
      * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // تحديث الحقول النصية
+        $user->fill($request->validated());
+
+        // التحقق من تعديل البريد الإلكتروني وإعادة ضبط حالة التحقق
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        // التحقق من وجود صورة مرفوعة
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('profile_images', 'public'); // حفظ الصورة في التخزين
+            $user->image = $imagePath; // تحديث مسار الصورة
+        }
+
+        // حفظ التغييرات
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+    
+    public function removeImage(Request $request)
+    {
+        $user = $request->user();
+        $user->image = null;
+        $user->save();
+        return Redirect::route('profile.edit')->with('status', 'profile-image-removed');
     }
 
     /**
