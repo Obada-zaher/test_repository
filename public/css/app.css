@@ -1,0 +1,117 @@
+
+.sidebar a.active {
+    background-color: #e64a19;
+    color: #ffffff;
+}
+
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #f8f9fa;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Sidebar Logo */
+.sidebar img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Sidebar Links */
+.sidebar a {
+    display: block;
+    color: #333;
+    text-decoration: none;
+    margin: 10px 0;
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.sidebar a:hover {
+    transform: scale(1.05);
+}
+.content {
+    margin-left: 270px;
+    padding: 20px;
+}
+.card:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease-in-out;
+}
+
+.hero-section {
+    text-align: center;
+    padding: 80px 20px;
+    background: linear-gradient(120deg,#6c73d6,#b4b8f8);
+    color: #fff;
+}
+.hero-section img {
+    max-width: 90%;
+    border-radius: 15px;
+}
+.btn-primary {
+    background-color:  #4d4c4c;
+    border-color:  #4d4c4c;
+}
+.btn-primary:hover {
+    background-color:  #772073;
+    border-color:  #772073;
+}
+.services-section {
+    padding: 50px 20px;
+    background-color: #f8f9fa;
+}
+footer {
+    background-color: #4d4c4c;
+    color: #fff;
+}
+footer a {
+    color:  #F39FE1;
+}
+.product-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.btn-primary {
+    background-color: #6c63ff;
+    border-color: #6c63ff;
+}
+
+.btn-primary:hover {
+    background-color: #5a52e0;
+    border-color: #5a52e0;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    color: #6c63ff;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+.side-image {
+    max-width: 100%;
+    height: 100vh;
+    object-fit: cover;
+    border-radius: 0 10px 10px 0;
+}
+
+.card {
+    min-height: 100px;
+}
