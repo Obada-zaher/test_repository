@@ -12,31 +12,20 @@
 
                         <label for="image" class="position-relative" style="cursor: pointer;">
                             <img id="profileImage"
-                            src="{{ $user->image ? asset('storage/' . $user->image) . '?' . time() : asset('images/noprofile.png') }}"
+                                 src="{{ $user->image ? asset('storage/' . $user->image) : asset('images/noprofile.png') }}"
                                  alt="Profile Image"
                                  class="rounded-circle border border-3 shadow-sm"
                                  style="width: 120px; height: 120px; object-fit: cover;">
+                            <span class="position-absolute bottom-0 end-0 bg-dark text-white rounded-circle p-1"
+                                  style="font-size: 12px; cursor: pointer;">
+                                <i class="fas fa-camera"></i>
+                            </span>
+                            <span class="position-absolute bottom-0 end-0 bg-dark text-white rounded-circle p-1"
+                            style="font-size: 12px; cursor: pointer;">
+                          <i class="fas fa-camera"></i>
+                      </span>
                         </label>
                         <input type="file" id="image" name="image" class="d-none" accept="image/*" onchange="previewImage(event)">
-
-                       <!-- زر تعيين الصورة وزر إزالة الصورة -->
-                    <div class="mt-2 text-center d-flex justify-content-center align-items-center gap-2">
-                        <!-- زر تعيين الصورة -->
-                        <label for="image" class="btn btn-sm btn-outline-dark d-flex align-items-center justify-content-center p-2 rounded-circle" style="cursor: pointer;" title="Set Image">
-                            <i class="fas fa-camera"></i>
-                        </label>
-                        <input type="file" id="image" name="image" class="d-none" accept="image/*" onchange="previewImage(event)">
-
-                        <!-- زر إزالة الصورة -->
-                        <form method="POST" action="{{ route('profile.remove_image') }}" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center p-2 rounded-circle" title="Remove Image">
-                                <i class="fas fa-eraser"></i>
-                            </button>
-                        </form>
-                    </div>
-
                 </div>
 
                 <div class="card-body px-5">
@@ -97,6 +86,14 @@
                     </div>
                     </form>
                 </div>
+
+                <!-- زر حذف الحساب -->
+                <form method="POST" action="{{ route('profile.destroy') }}" class="mt-4 text-center" onsubmit="return confirm('Are you sure you want to delete your account?');">
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="submit" class="btn btn-outline-danger">Delete Account</button>
+                </form>
             </div>
         </div>
     </div>

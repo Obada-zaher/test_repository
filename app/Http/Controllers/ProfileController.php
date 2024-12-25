@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\ProfileUpdateRequest;
 
 class ProfileController extends Controller
 {
@@ -44,8 +45,12 @@ class ProfileController extends Controller
 
         // التحقق من وجود صورة مرفوعة
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('profile_images', 'public'); // حفظ الصورة في التخزين
-            $user->image = $imagePath; // تحديث مسار الصورة
+            try {
+                $imagePath = $request->file('image')->store('profile_images', 'public');
+                $user->image = $imagePath;
+            } catch (\Exception $e) {
+                Log::error('Error saving image: ' . $e->getMessage());
+            }
         }
 
         // حفظ التغييرات
@@ -53,7 +58,7 @@ class ProfileController extends Controller
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
-    
+
     public function removeImage(Request $request)
     {
         $user = $request->user();

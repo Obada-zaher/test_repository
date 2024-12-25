@@ -20,6 +20,14 @@
                     <div class="d-flex justify-content-center mt-4">
                         <a href="/profile/edit" class="btn btn-primary mx-2">Edit Profile</a>
                     </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button class="btn btn-danger">
+                                {{ __('Logout') }}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
