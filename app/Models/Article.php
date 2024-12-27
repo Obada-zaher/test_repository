@@ -7,19 +7,27 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Artical extends Model
+class Article extends Model
 {
     use HasFactory;
-    protected $table = "articals";
+    protected $table = "articles";
     protected $fillable = [
+        'user_id',
         'category_id',
         'title',
         'body',
+        'status',
+        'created_at'
     ];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function photos(): HasMany

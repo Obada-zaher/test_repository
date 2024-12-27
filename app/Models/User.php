@@ -28,9 +28,9 @@ class User extends Authenticatable
         'password',
     ];
 
-    public function articals(): HasMany
+    public function articles(): HasMany
     {
-        return $this->hasMany(Artical::class);
+        return $this->hasMany(Article::class);
     }
 
     public function likes(): HasMany

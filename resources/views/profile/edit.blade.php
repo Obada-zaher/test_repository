@@ -1,12 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+
+<x-sidebar />
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-lg border-0">
                 <div class="card-header text-center bg-white position-relative py-5">
-                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('profile.update', $user->id) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PATCH')
 
@@ -20,10 +23,6 @@
                                   style="font-size: 12px; cursor: pointer;">
                                 <i class="fas fa-camera"></i>
                             </span>
-                            <span class="position-absolute bottom-0 end-0 bg-dark text-white rounded-circle p-1"
-                            style="font-size: 12px; cursor: pointer;">
-                          <i class="fas fa-camera"></i>
-                      </span>
                         </label>
                         <input type="file" id="image" name="image" class="d-none" accept="image/*" onchange="previewImage(event)">
                 </div>
@@ -86,14 +85,6 @@
                     </div>
                     </form>
                 </div>
-
-                <!-- زر حذف الحساب -->
-                <form method="POST" action="{{ route('profile.destroy') }}" class="mt-4 text-center" onsubmit="return confirm('Are you sure you want to delete your account?');">
-                    @csrf
-                    @method('DELETE')
-
-                    <button type="submit" class="btn btn-outline-danger">Delete Account</button>
-                </form>
             </div>
         </div>
     </div>

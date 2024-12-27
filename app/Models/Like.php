@@ -11,14 +11,14 @@ class Like extends Model
     use HasFactory;
     protected $table = "likes";
     protected $fillable = [
-        'artical_id',
+        'article_id',
         'user_id',
         'liked'
     ];
-    
-    public function artical(): BelongsTo
+
+    public function article(): BelongsTo
     {
-        return $this->belongsTo(Artical::class);
+        return $this->belongsTo(Article::class);
     }
 
     public function user(): BelongsTo

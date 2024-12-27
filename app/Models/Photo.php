@@ -11,12 +11,12 @@ class Photo extends Model
     use HasFactory;
     protected $table = "photos";
     protected $fillable = [
-        'artical_id',
+        'article_id',
         'image',
     ];
 
-    public function artical(): BelongsTo
+    public function article(): BelongsTo
     {
-        return $this->belongsTo(Artical::class);
+        return $this->belongsTo(Article::class);
     }
 }

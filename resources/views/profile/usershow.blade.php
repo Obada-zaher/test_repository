@@ -18,36 +18,19 @@
                 <div class="card-body text-center">
                     <h4 class="card-title fw-bold text-truncate">{{ $user->first_name . ' ' . $user->last_name }}</h4>
                     <p class="card-text text-muted mb-2">{{ $user->email }}</p>
-                    <p class="card-text text-muted mb-2">Phone: {{ $user->phone ?? 'Not Provided' }}</p>
                     <p class="card-text text-muted mb-2">Username: {{ $user->username ?? 'Not Provided' }}</p>
-
-                    @if($isCurrentUser)
-                    <div class="d-flex justify-content-center mt-4">
-                        <a href="{{route('edit.profile')}}" class="btn btn-primary mx-2">Edit Profile</a>
-                    </div>
-                    <div class="d-flex justify-content-center mt-4">
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button class="btn btn-danger">
-                                {{ __('Logout') }}
-                            </button>
-                        </form>
-                    </div>
-                @endif
                 </div>
             </div>
         </div>
     </div>
     <div class="container py-5">
-        <div class="articles-section mt-5">
+    <div class="articles-section mt-5">
+
         <h2 class="text-center mb-4" style="font-weight: bold; color: #4d467480; font-size: 23px; padding-bottom: 10px;">
             Published Articles
         </h2>
         @include('components.articles', ['articles' => $articles])
     </div>
-</div>
-    </div>
-</div>
 </div>
 
 @if(session('success'))

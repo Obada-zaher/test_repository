@@ -1,6 +1,6 @@
 
 .sidebar a.active {
-    background-color: #e64a19;
+    background-color: #6961df;
     color: #ffffff;
 }
 
@@ -48,8 +48,8 @@
     padding: 20px;
 }
 .card:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease-in-out;
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .hero-section {
@@ -114,4 +114,31 @@ h1 {
 
 .card {
     min-height: 100px;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(50%) contrast(100%);
+}
+
+.carousel-inner img {
+    border-radius: 10px;
+}
+.btn i {
+    transition: color 0.3s ease;
+}
+.edit-button {
+    background-color: transparent;
+    border-color: transparent;
+    color: #7f29e2;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.edit-button:hover {
+    background-color: transparent;
+    border-color: transparent;
+    color: #303985;
+}
+

@@ -12,14 +12,14 @@ class Comment extends Model
     use HasFactory;
     protected $table = "comments";
     protected $fillable = [
-        'artical_id',
+        'article_id',
         'user_id',
         'content'
     ];
 
-    public function artical(): BelongsTo
+    public function article(): BelongsTo
     {
-        return $this->belongsTo(Artical::class);
+        return $this->belongsTo(Article::class);
     }
 
     public function user(): BelongsTo

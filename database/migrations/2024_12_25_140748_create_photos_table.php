@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('photos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('artical_id')
-                  ->constrained('articals')
+            $table->foreignId('article_id')
+                  ->constrained('articles')
                   ->cascadeOnUpdate()
                   ->cascadeOnDelete();
             $table->binary('image')->nullable();

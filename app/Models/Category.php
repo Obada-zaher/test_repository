@@ -15,8 +15,8 @@ class Category extends Model
         'name',
     ];
 
-    public function articals(): HasMany
+    public function articles(): HasMany
     {
-        return $this->hasMany(Artical::class);
+        return $this->hasMany(Article::class);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Article;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,9 +14,6 @@ use App\Http\Requests\ProfileUpdateRequest;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -22,28 +21,25 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function index()
+    public function show($id)
     {
-        $user = Auth::user();
-        return view('profile.show', compact('user'));
+        $user = User::findOrFail($id);
+        $articles = Article::where('user_id', $user->id)->where('status', 'published')->get();
+        $isCurrentUser = Auth::check() && Auth::id() == $user->id;
+        return view('profile.show', compact('user', 'articles', 'isCurrentUser'));
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request, $id): RedirectResponse
     {
-        $user = $request->user();
+        $user = User::findOrFail($id);
+        if ($user->id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
 
-        // تحديث الحقول النصية
         $user->fill($request->validated());
-
-        // التحقق من تعديل البريد الإلكتروني وإعادة ضبط حالة التحقق
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
-
-        // التحقق من وجود صورة مرفوعة
         if ($request->hasFile('image')) {
             try {
                 $imagePath = $request->file('image')->store('profile_images', 'public');
@@ -52,11 +48,9 @@ class ProfileController extends Controller
                 Log::error('Error saving image: ' . $e->getMessage());
             }
         }
-
-        // حفظ التغييرات
         $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }
 
     public function removeImage(Request $request)
@@ -67,9 +61,6 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-image-removed');
     }
 
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
