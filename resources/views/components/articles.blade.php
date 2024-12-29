@@ -66,7 +66,7 @@
                         <i class="bi bi-trash"></i>
                     </button>
                 </form>
-            @endif
+                @endif
 
                 <h5 class="fw-bold text-dark mb-2">{{ $article->title }}</h5>
 
