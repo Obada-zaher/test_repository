@@ -96,35 +96,6 @@
     </div>
 </div>
 <script>
-    function handleFileInput(input) {
-        input.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = input.nextElementSibling;
-                    preview.innerHTML = `
-                        <img src="${e.target.result}" class="img-thumbnail me-2 mb-2" style="width: 100px; height: 100px;">
-                        <button type="button" class="btn btn-outline-danger btn-sm remove-photo" onclick="removePhoto(this)">Remove</button>
-                    `;
-                };
-                reader.readAsDataURL(this.files[0]);
-
-                const newInputContainer = document.createElement('div');
-                newInputContainer.className = 'photo-input-container';
-                const newInput = document.createElement('input');
-                newInput.type = 'file';
-                newInput.name = 'photos[]';
-                newInput.accept = 'image/*';
-                newInput.className = 'form-control mb-2 photo-input';
-                newInputContainer.appendChild(newInput);
-                newInputContainer.appendChild(document.createElement('div'));
-                input.parentElement.parentElement.appendChild(newInputContainer);
-
-                handleFileInput(newInput);
-            }
-        });
-    }
-
     function removePhoto(button) {
     const preview = button.parentElement;
     const input = preview.previousElementSibling;
@@ -151,10 +122,5 @@
         container.remove();
     }
 }
-    document.addEventListener('DOMContentLoaded', function () {
-        const initialInput = document.querySelector('.photo-input');
-        handleFileInput(initialInput);
-    });
 </script>
-
 @endsection

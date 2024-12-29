@@ -8,6 +8,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card h-100 shadow-lg">
+                <x-Errors/>
                 <div class="card-img-top position-relative d-flex justify-content-center align-items-center"
                      style="height: 200px; background-color: #f8f9fa;">
                     <img src="{{ $user->image ? asset('storage/' . $user->image) : asset('images/noprofile.png') }}"
@@ -50,35 +51,6 @@
 </div>
 </div>
 
-@if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
-
-@if($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
 
 @endsection
 
-<script>
-    function toggleReadMore(articleId) {
-        const shortBody = document.querySelector(`.article-body[data-article-id="${articleId}"]`);
-        const fullBody = document.getElementById(`article-full-${articleId}`);
-
-        if (shortBody.classList.contains('d-none')) {
-            shortBody.classList.remove('d-none');
-            fullBody.classList.add('d-none');
-        } else {
-            shortBody.classList.add('d-none');
-            fullBody.classList.remove('d-none');
-        }
-    }
-</script>

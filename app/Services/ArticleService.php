@@ -17,7 +17,7 @@ class ArticleService
        ->select('id', 'title', 'body', 'category_id', 'user_id', 'status', 'created_at')
        ->where('status', 'published')
        ->orderBy('created_at', 'desc')
-       ->paginate(10);;
+       ->paginate(10);
 
        $message = 'articles retrieved successfully.';
        $code = 200;

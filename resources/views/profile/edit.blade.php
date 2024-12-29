@@ -11,6 +11,7 @@
                 <div class="card-header text-center bg-white position-relative py-5">
                     <form method="POST" action="{{ route('profile.update', $user->id) }}" enctype="multipart/form-data">
                         @csrf
+
                         @method('PATCH')
 
                         <label for="image" class="position-relative" style="cursor: pointer;">
@@ -34,7 +35,6 @@
                         </div>
                     @endif
 
-                    <!-- الاسم الأول -->
                     <div class="mb-4">
                         <label for="first_name" class="form-label fw-bold">First Name</label>
                         <input type="text" class="form-control @error('first_name') is-invalid @enderror" id="first_name" name="first_name" value="{{ old('first_name', $user->first_name) }}" required>
@@ -43,7 +43,6 @@
                         @enderror
                     </div>
 
-                    <!-- الاسم الأخير -->
                     <div class="mb-4">
                         <label for="last_name" class="form-label fw-bold">Last Name</label>
                         <input type="text" class="form-control @error('last_name') is-invalid @enderror" id="last_name" name="last_name" value="{{ old('last_name', $user->last_name) }}">
@@ -52,7 +51,6 @@
                         @enderror
                     </div>
 
-                    <!-- البريد الإلكتروني -->
                     <div class="mb-4">
                         <label for="email" class="form-label fw-bold">Email</label>
                         <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $user->email) }}" required>
@@ -61,7 +59,6 @@
                         @enderror
                     </div>
 
-                    <!-- اسم المستخدم -->
                     <div class="mb-4">
                         <label for="username" class="form-label fw-bold">Username</label>
                         <input type="text" class="form-control @error('username') is-invalid @enderror" id="username" name="username" value="{{ old('username', $user->username) }}">
@@ -70,7 +67,6 @@
                         @enderror
                     </div>
 
-                    <!-- رقم الهاتف -->
                     <div class="mb-4">
                         <label for="phone" class="form-label fw-bold">Phone</label>
                         <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone', $user->phone) }}">
@@ -78,8 +74,6 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-
-                    <!-- زر الحفظ -->
                     <div class="d-flex justify-content-center mt-4">
                         <button type="submit" class="btn btn-dark px-4">Save Changes</button>
                     </div>
@@ -89,15 +83,4 @@
         </div>
     </div>
 </div>
-
-<script>
-function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function() {
-        var output = document.getElementById('profileImage');
-        output.src = reader.result;
-    }
-    reader.readAsDataURL(event.target.files[0]);
-}
-</script>
 @endsection
