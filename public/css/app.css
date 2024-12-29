@@ -142,3 +142,32 @@ h1 {
     color: #303985;
 }
 
+.btn-like {
+    border: none;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-like:hover {
+    transform: scale(1.1);
+}
+
+.btn-like .like-icon.text-primary {
+    color: #007bff;
+}
+
+.btn-like .like-icon.text-secondary {
+    color: #6c757d;
+}
+.comments-section {
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+.comment {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}

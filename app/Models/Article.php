@@ -39,6 +39,13 @@ class Article extends Model
     {
         return $this->hasMany(Like::class);
     }
+    
+    protected $appends = ['likes_count'];
+
+    public function getLikesCountAttribute()
+    {
+        return $this->likes()->count();
+    }
 
     public function comments(): HasMany
     {

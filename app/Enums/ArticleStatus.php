@@ -11,6 +11,4 @@ Enum ArticleStatus: string
     {
         return [self::PUBLISHED->value, self::Draft->value];
 }
-
-
 }

@@ -3,43 +3,47 @@
 namespace App\Http\Controllers;
 
 use Throwable;
+use App\Models\Photo;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Responses\Response;
 use App\Services\ArticleService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreArticleRequest;
 
 class ArticleController extends Controller
 {
     private ArticleService $articleService;
-
     // constructor
     public function __construct(ArticleService $articleService)
     {
+
         $this->articleService = $articleService;
     }
 
-    public function get()
+    public function get(Request $request)
     {
         try {
             $response = $this->articleService->get();
-
             if (!isset($response['data'])) {
                 return Response::Error([], 'No data found.');
             }
-
             $articles = $response['data'];
-            $categories = Category::all();
-
+            $categories = Category::select('id','name')->get();
+            if ($request->ajax()) {
+                return response()->json([
+                    'articles' => view('components.articles', ['articles' => $articles])->render(),
+                    'hasMore' => $articles->hasMorePages(),
+                ]);
+            }
             return view('home', compact('articles', 'categories'));
         } catch (Throwable $throwable) {
             $message = $throwable->getMessage();
             return Response::Error([], $message);
         }
     }
-
 
     public function my()
     {
@@ -49,7 +53,8 @@ class ArticleController extends Controller
                 return Response::Error([], 'No data found.');
             }
             $articles = $response['data'];
-            return view('Articles.myPublishedArticles', compact('articles'));
+            $categories = Category::select('id','name')->get();
+            return view('Articles.myPublishedArticles', compact('articles','categories'));
         } catch (Throwable $throwable) {
             $message = $throwable->getMessage();
             return Response::Error([], $message);
@@ -64,7 +69,8 @@ class ArticleController extends Controller
                 return Response::Error([], 'No data found.');
             }
             $articles = $response['data'];
-            return view('Articles.myDraftArticles', compact('articles'));
+            $categories = Category::select('id','name')->get();
+            return view('Articles.myDraftArticles', compact('articles','categories'));
         } catch (Throwable $throwable) {
             $message = $throwable->getMessage();
             return Response::Error([], $message);
@@ -73,7 +79,7 @@ class ArticleController extends Controller
 
     public function create()
     {
-        $categories = Category::all();
+        $categories = Category::select('id','name')->get();
         return view('Articles.createArticle', compact('categories'));
     }
 
@@ -99,9 +105,9 @@ class ArticleController extends Controller
         }
     }
 
-    public function create1($id)
+    public function edit($id)
     {
-        $categories = Category::all();
+        $categories = Category::select('id','name')->get();
         $article = Article::findOrFail($id);
         return view('Articles.updateArticle', compact('categories', 'article'));
     }
@@ -111,7 +117,7 @@ class ArticleController extends Controller
         try {
             $article = Article::findOrFail($id);
             $response = $this->articleService->update($id, $request->validated(), $request->file('photos'));
-            if ($response['status'] === 1) {
+            if ($response['code'] === 200) {
                 $redirectRoute = $article->status === 'draft' ? 'draft.articles' : 'my.articles';
                 return redirect()->route($redirectRoute)->with('success', 'Article updated successfully!');
             } else {
@@ -129,7 +135,7 @@ class ArticleController extends Controller
             $article = Article::findOrFail($id);
             $response = $this->articleService->delete($id);
 
-            if ($response['status'] === 1) {
+            if ($response['code'] === 200) {
                 $redirectRoute = $article->status === 'draft' ? 'draft.articles' : 'my.articles';
                 return redirect()->route($redirectRoute)->with('success', 'Article deleted successfully!');
             } else {
@@ -154,5 +160,15 @@ class ArticleController extends Controller
         }
     }
 
+   public function deletePhoto($id)
+    {
+        try {
+            $this->articleService->deletePhoto($id);
+            return response()->json(['message' => 'Photo deleted successfully'], 200);
+        } catch (Throwable $throwable) {
+            $message = $throwable->getMessage();
+            return Response::Error([], $message);
+        }
 
+    }
 }

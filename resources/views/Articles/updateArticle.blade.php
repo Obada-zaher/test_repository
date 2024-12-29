@@ -55,14 +55,14 @@
                             <label for="photos" class="form-label fw-bold">Upload Photos</label>
                             <div id="photoInputs">
                                 @foreach($article->photos as $photo)
-                                    <div class="photo-input-container">
-                                        <input type="file" class="form-control mb-2 photo-input" name="photos[]" accept="image/*">
-                                        <div>
-                                            <img src="{{ asset('storage/' . $photo->image) }}" class="img-thumbnail me-2 mb-2" style="width: 100px; height: 100px;">
-                                            <button type="button" class="btn btn-outline-danger btn-sm remove-photo" onclick="removePhoto(this)">Remove</button>
-                                        </div>
+                                <div class="photo-input-container">
+                                    <input type="file" class="form-control mb-2 photo-input" name="photos[]" accept="image/*">
+                                    <div>
+                                        <img src="{{ asset('storage/' . $photo->image) }}" class="img-thumbnail me-2 mb-2" style="width: 100px; height: 100px;">
+                                        <button type="button" class="btn btn-outline-danger btn-sm remove-photo" data-photo-id="{{ $photo->id }}" onclick="removePhoto(this)">Remove</button>
                                     </div>
-                                @endforeach
+                                </div>
+                            @endforeach
                                 <div class="photo-input-container">
                                     <input type="file" class="form-control mb-2 photo-input" name="photos[]" accept="image/*">
                                     <div id="photoPreviews" class="mb-3"></div>
@@ -126,12 +126,31 @@
     }
 
     function removePhoto(button) {
-        const preview = button.parentElement;
-        const input = preview.previousElementSibling;
-        const container = input.parentElement;
+    const preview = button.parentElement;
+    const input = preview.previousElementSibling;
+    const container = input.parentElement;
+
+    const photoId = button.getAttribute('data-photo-id');
+
+    if (photoId) {
+        fetch(`/photos/${photoId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                container.remove();
+            } else {
+                console.error('Failed to delete photo');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
         container.remove();
     }
-
+}
     document.addEventListener('DOMContentLoaded', function () {
         const initialInput = document.querySelector('.photo-input');
         handleFileInput(initialInput);

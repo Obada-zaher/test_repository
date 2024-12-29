@@ -14,8 +14,6 @@
                     </h2>
                     <form method="POST" action="{{ route('articles.store') }}" enctype="multipart/form-data" id="articleForm">
                         @csrf
-
-                        <!-- Title -->
                         <div class="mb-3">
                             <label for="title" class="form-label fw-bold">Article Title</label>
                             <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title') }}" required>
@@ -24,7 +22,6 @@
                             @enderror
                         </div>
 
-                        <!-- Body -->
                         <div class="mb-3">
                             <label for="body" class="form-label fw-bold">Article Body</label>
                             <textarea class="form-control @error('body') is-invalid @enderror" id="body" name="body" rows="5" required>{{ old('body') }}</textarea>
@@ -33,7 +30,6 @@
                             @enderror
                         </div>
 
-                        <!-- Category -->
                         <div class="mb-3">
                             <label for="category_id" class="form-label fw-bold">Category</label>
                             <select class="form-select @error('category_id') is-invalid @enderror" id="category_id" name="category_id" required>
@@ -49,7 +45,6 @@
                             @enderror
                         </div>
 
-                        <!-- Images -->
                         <div class="mb-3">
                             <label for="photos" class="form-label fw-bold">Upload Photos</label>
                             <div id="photoInputs">
@@ -58,7 +53,6 @@
                             </div>
                         </div>
 
-                        <!-- Submit -->
                         <div class="d-flex justify-content-center gap-3">
                             <button type="submit" class="btn btn-primary px-5" name="status" value="published">Publish Article</button>
                             <button type="submit" class="btn btn-secondary px-5" name="status" value="draft">Save as Draft</button>
@@ -72,11 +66,9 @@
 </div>
 </div>
 <script>
-    // Function to handle file input change
     function handleFileInput(input) {
         input.addEventListener('change', function() {
             if (this.files && this.files[0]) {
-                // Display preview
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const preview = input.nextElementSibling;
@@ -86,8 +78,6 @@
                     `;
                 };
                 reader.readAsDataURL(this.files[0]);
-
-                // Add a new input field
                 const newInputContainer = document.createElement('div');
                 newInputContainer.className = 'photo-input-container';
                 const newInput = document.createElement('input');
@@ -96,16 +86,13 @@
                 newInput.accept = 'image/*';
                 newInput.className = 'form-control mb-2 photo-input';
                 newInputContainer.appendChild(newInput);
-                newInputContainer.appendChild(document.createElement('div')); // Placeholder for preview
+                newInputContainer.appendChild(document.createElement('div'));
                 input.parentElement.parentElement.appendChild(newInputContainer);
-
-                // Attach event listener to the new input
                 handleFileInput(newInput);
             }
         });
     }
 
-    // Function to remove a photo and its input
     function removePhoto(button) {
         const preview = button.parentElement;
         const input = preview.previousElementSibling;
@@ -114,7 +101,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Get the initial input and attach the event listener
         const initialInput = document.querySelector('.photo-input');
         handleFileInput(initialInput);
     });

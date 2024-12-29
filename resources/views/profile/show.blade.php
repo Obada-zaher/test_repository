@@ -23,7 +23,7 @@
 
                     @if($isCurrentUser)
                     <div class="d-flex justify-content-center mt-4">
-                        <a href="{{route('edit.profile')}}" class="btn btn-primary mx-2">Edit Profile</a>
+                        <a href="{{route('profile.edit')}}" class="btn btn-primary mx-2">Edit Profile</a>
                     </div>
                     <div class="d-flex justify-content-center mt-4">
                         <form method="POST" action="{{ route('logout') }}">

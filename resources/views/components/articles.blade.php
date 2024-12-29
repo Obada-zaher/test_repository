@@ -1,9 +1,9 @@
+<div id="articles-container">
 @if($articles->count() > 0)
 @foreach($articles as $article)
 <div class="col-12">
     <div class="card shadow-sm border-0">
         <div class="card-body d-flex flex-column flex-md-row align-items-start">
-
             @if($article->photos->count() > 0)
             <div class="me-md-4 flex-shrink-0" style="width: 65%; max-width: 500px;">
                 <div id="carousel-{{ $article->id }}" class="carousel slide" data-bs-ride="carousel">
@@ -51,7 +51,7 @@
                 </div>
 
                 @if(Auth::check() && Auth::id() == $article->user_id)
-                <a href="{{ route('articles.create1', $article->id) }}"
+                <a href="{{ route('articles.edit', $article->id) }}"
                    class="btn btn-sm btn-outline-primary d-flex align-items-center position-absolute top-0 end-0 edit-button">
                     <i class="bi bi-pencil"></i>
                 </a>
@@ -80,22 +80,252 @@
                     {{ $article->body }}
                     <span class="read-less" style="color: blue; cursor: pointer;" onclick="toggleReadMore({{ $article->id }})">Read less</span>
                 </p>
-
                 <div class="d-flex justify-content-start align-items-center mt-3">
-                    <button class="btn btn-outline-primary btn-sm d-flex align-items-center me-2">
-                        <i class="fas fa-thumbs-up"></i>
+                    <button
+                        class="btn btn-like btn-sm d-flex align-items-center me-2"
+                        data-article-id="{{ $article->id }}"
+                        data-liked="{{ $article->likes->contains('user_id', Auth::id()) ? 'true' : 'false' }}">
+                        <i class="bi bi-hand-thumbs-up-fill like-icon {{ $article->likes->contains('user_id', Auth::id()) ? 'text-primary' : 'text-secondary' }}"></i>
+                        <span class="ms-1 like-count">{{ $article->likes->count() }}</span>
                     </button>
-                    <a href="#" class="btn btn-outline-secondary btn-sm d-flex align-items-center">
-                        <i class="bi bi-chat-dots"></i>
-                    </a>
-                </div> 
-            </div>
+                <a href="#"
+                class="btn btn-outline-secondary btn-sm d-flex align-items-center view-comments"
+                data-article-id="{{ $article->id }}">
+                    <i class="bi bi-chat-dots"></i>
+                    <span class="ms-1">Comments</span>
+                </a>
+
+                </div>
+
+                <div id="comments-{{ $article->id }}" class="comments-section d-none">
+                    <div class="comments-container"></div>
+
+                    <form id="add-comment-form-{{ $article->id }}" class="add-comment-form mt-3">
+                        @csrf
+                        <div class="input-group">
+                            <input type="text" name="comment" id="comment-input-{{ $article->id }}"
+                                   class="form-control" placeholder="Add a comment..." required>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+
+                    <button data-article-id="{{ $article->id }}"
+                            data-page="2"
+                            class="btn btn-link load-more-comments d-none mt-3">Load More Comments</button>
+                </div>
         </div>
 
     </div>
 </div>
+
 @endforeach
 </div>
 @else
 <p class="text-center text-muted">No articles available.</p>
 @endif
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+      if (window.location.pathname !== '/articles/filter') {
+          let page = 2;
+          const articlesContainer = document.getElementById('articles-container');
+          const loadingSpinner = document.createElement('div');
+          loadingSpinner.className = 'text-center py-4';
+          loadingSpinner.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+          let isLoading = false;
+          window.addEventListener('scroll', function () {
+              if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && !isLoading) {
+                  isLoading = true;
+                  articlesContainer.appendChild(loadingSpinner);
+
+                  fetch(`?page=${page}`, {
+                      headers: {
+                          'X-Requested-With': 'XMLHttpRequest',
+                      },
+                  })
+                      .then(response => response.json())
+                      .then(data => {
+                          if (data.articles) {
+                              articlesContainer.insertAdjacentHTML('beforeend', data.articles);
+                              if (!data.hasMore) {
+                                  window.removeEventListener('scroll', arguments.callee);
+                              }
+                              page++;
+                          }
+                      })
+                      .catch(error => console.error('Error loading articles:', error))
+                      .finally(() => {
+                          isLoading = false;
+                          articlesContainer.removeChild(loadingSpinner);
+                      });
+              }
+          });
+          articlesContainer.addEventListener('click', function (event) {
+              if (event.target.closest('.btn-like')) {
+                  handleLikeButton(event.target.closest('.btn-like'));
+              } else if (event.target.closest('.view-comments')) {
+                  handleCommentsButton(event.target.closest('.view-comments'));
+              } else if (event.target.closest('.load-more-comments')) {
+                  handleLoadMoreComments(event.target.closest('.load-more-comments'));
+              }
+          });
+      }
+      initializeCommentForms();
+  });
+
+  function handleLikeButton(button) {
+      if (button.disabled) return;
+
+      const articleId = button.getAttribute('data-article-id');
+      const liked = button.getAttribute('data-liked') === 'true';
+      button.disabled = true;
+
+      fetch('/like', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          },
+          body: JSON.stringify({ article_id: articleId, liked: !liked })
+      })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status === 1) {
+                  const likeCount = button.querySelector('.like-count');
+                  const likeIcon = button.querySelector('.like-icon');
+
+                  likeCount.textContent = parseInt(likeCount.textContent) + (liked ? -1 : 1);
+
+                  button.setAttribute('data-liked', String(!liked));
+
+                  likeIcon.classList.toggle('text-primary', !liked);
+                  likeIcon.classList.toggle('text-secondary', liked);
+              }
+          })
+          .finally(() => {
+              button.disabled = false;
+          });
+  }
+
+  function handleCommentsButton(button) {
+      event.preventDefault();
+
+      const articleId = button.getAttribute('data-article-id');
+      const commentsSection = document.getElementById(`comments-${articleId}`);
+      const commentsContainer = commentsSection.querySelector('.comments-container');
+      const loadMoreButton = commentsSection.querySelector('.load-more-comments');
+
+      if (!commentsSection.classList.contains('d-none')) {
+          commentsSection.classList.add('d-none');
+          return;
+      }
+
+      commentsContainer.innerHTML = '';
+      loadComments(articleId, 1, commentsContainer, loadMoreButton);
+
+      commentsSection.classList.remove('d-none');
+  }
+
+  function handleLoadMoreComments(button) {
+      const articleId = button.getAttribute('data-article-id');
+      const page = button.getAttribute('data-page');
+      const commentsSection = document.getElementById(`comments-${articleId}`);
+      const commentsContainer = commentsSection.querySelector('.comments-container');
+
+      loadComments(articleId, page, commentsContainer, button);
+  }
+  function loadComments(articleId, page, commentsContainer, loadMoreButton) {
+      fetch(`/articles/${articleId}/comments?page=${page}`, {
+          method: 'GET',
+          headers: {
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+      })
+          .then(response => response.json())
+          .then(data => {
+              if (data.comments.length === 0 && page === 1) {
+                  commentsContainer.innerHTML = '<p class="text-muted">No comments available.</p>';
+              } else {
+                  data.comments.forEach(comment => {
+                      const commentHtml = `
+                          <div class="comment mb-2 p-2 border rounded">
+                              <strong>${comment.user.first_name} ${comment.user.last_name}:</strong>
+                              <p>${comment.content}</p>
+                          </div>
+                      `;
+                      commentsContainer.innerHTML += commentHtml;
+                  });
+
+                  if (data.hasMore) {
+                      loadMoreButton.dataset.page = parseInt(page) + 1;
+                      loadMoreButton.classList.remove('d-none');
+                  } else {
+                      loadMoreButton.classList.add('d-none');
+                  }
+              }
+          })
+          .catch(error => {
+              console.error('Error fetching comments:', error);
+          });
+  }
+
+  function toggleReadMore(articleId) {
+      const articleBody = document.querySelector(`[data-article-id="${articleId}"]`);
+      const fullBody = document.getElementById(`article-full-${articleId}`);
+
+      if (fullBody.classList.contains('d-none')) {
+          fullBody.classList.remove('d-none');
+          articleBody.classList.add('d-none');
+      } else {
+          fullBody.classList.add('d-none');
+          articleBody.classList.remove('d-none');
+      }
+  }
+
+  function initializeCommentForms() {
+    document.querySelectorAll('.add-comment-form').forEach(form => {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const articleId = this.id.split('-').pop();
+            const commentInput = document.getElementById(`comment-input-${articleId}`);
+            const commentsContainer = document.querySelector(`#comments-${articleId} .comments-container`);
+
+            postComment(articleId, commentInput.value, commentsContainer)
+                .then(() => {
+                    commentInput.value = ''; // Clear the input field after submission
+                })
+                .catch(error => console.error('Error adding comment:', error));
+        });
+    });
+}
+
+function postComment(articleId, commentContent, commentsContainer) {
+    return fetch(`/articles/${articleId}/comments`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ comment: commentContent })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const commentHtml = generateCommentHTML(data.comment);
+            commentsContainer.insertAdjacentHTML('afterbegin', commentHtml); // Add new comment to the top
+        } else {
+            alert('Failed to add comment.');
+        }
+    });
+}
+
+function generateCommentHTML(comment) {
+    return `
+        <div class="comment mb-2 p-2 border rounded">
+            <strong>${comment.user.first_name} ${comment.user.last_name}:</strong>
+            <p>${comment.content}</p>
+        </div>
+    `;
+}
+</script>
